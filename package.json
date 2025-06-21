@@ -4,6 +4,7 @@
   "description": "task tracker that runs in the CLI",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js"
   },
   "author": "Alex Sweeney",
   "license": "ISC"
