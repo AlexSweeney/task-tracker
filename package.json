@@ -1,0 +1,10 @@
+{
+  "name": "task-tracker",
+  "version": "1.0.0",
+  "description": "task tracker that runs in the CLI",
+  "main": "index.js",
+  "scripts": {
+  },
+  "author": "Alex Sweeney",
+  "license": "ISC"
+}
