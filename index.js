@@ -59,6 +59,15 @@ async function deleteTask(taskToDelete) {
   }
 }
 
+function help() {
+  console.log(`available commands:
+      help                - list all avaialbe commands
+      add [task name]     - add a task
+      read                - log all saved tasks
+      delete [task name]  - delete a task
+      exit                - exit task-cli`)
+}
+
 rl.on('line', async (line) => {
   const input = line.trim();
 
@@ -79,9 +88,7 @@ rl.on('line', async (line) => {
       rl.close();
       return
     case 'help':
-      console.log(`available commands:
-      help - list all avaialbe commands
-      exit - exit task-cli`)
+      help()
       break;
 
     default:
