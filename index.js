@@ -1,6 +1,8 @@
 const readline = require('readline');
 const fs = require('fs');
 
+const FILE_NAME = 'tasks.json';
+
 const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout,
@@ -10,44 +12,61 @@ const rl = readline.createInterface({
 console.log("task-cli is running.  Type a command or enter 'help' to see all available commands.")
 rl.prompt();
 
+function add(args) {
+  const fileExists = fs.existsSync(FILE_NAME);
+  let tasks = {};
+
+  if (fileExists) {
+    try {
+      const data = fs.readFileSync(FILE_NAME, 'utf-8');
+      const storedTasks = JSON.parse(data);
+
+      tasks = storedTasks;
+    } catch (err) {
+      console.error('Error reading or parsing file:', err);
+    }
+  }
+
+  const task = args.join(' ');
+
+  const nextKey = Object.keys(tasks).length.toString();
+  tasks[nextKey] = task;
+
+  const jsonData = JSON.stringify(tasks, null, 2);
+
+  if (task) {
+    fs.writeFileSync(FILE_NAME, jsonData)
+  } else {
+    console.log(`task not added`)
+    console.log('please enter a name for the task, ie: add do the dishes')
+  }
+}
+
 rl.on('line', (line) => {
   const input = line.trim();
 
   const [command, ...args] = input.split(' ');
 
-  switch(command) {
-  case 'add':  
-    const task = args.join(' '); 
-
-    const data = {
-      0: task
-    };
-
-    const jsonData = JSON.stringify(data, null, 2);
-
-    if(task) { 
-      fs.writeFileSync('tasks.json', jsonData)
-    } else {
-      console.log(`task: ${task} not added`)
-      console.log('please enter a name for the task, ie: add do dishes')
-    }
-    
-    break;
-  case 'exit': 
-    rl.close();
-    return
-  case 'help': 
-    console.log(`available commands:
+  switch (command) {
+    case 'add':
+      add(args)
+      break;
+    case 'exit':
+      rl.close();
+      return
+    case 'help':
+      console.log(`available commands:
       help - list all avaialbe commands
       exit - exit task-cli`)
-    break;
- 
-  default: 
+      break;
+
+    default:
       console.log(`Unknown command: "${input}" enter "help" to see all avaialbe commands`)
   }
 
   rl.prompt();
 });
+
 
 rl.on('close', () => {
   console.log('exiting task-cli.')
