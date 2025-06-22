@@ -1,5 +1,6 @@
 const readline = require('readline');
 const fs = require('fs');
+const { getStoredTasks } = require('./utils');
 
 const FILE_NAME = 'tasks.json';
 
@@ -12,20 +13,8 @@ const rl = readline.createInterface({
 console.log("task-cli is running.  Type a command or enter 'help' to see all available commands.")
 rl.prompt();
 
-function add(args) {
-  const fileExists = fs.existsSync(FILE_NAME);
-  let tasks = {};
-
-  if (fileExists) {
-    try {
-      const data = fs.readFileSync(FILE_NAME, 'utf-8');
-      const storedTasks = JSON.parse(data);
-
-      tasks = storedTasks;
-    } catch (err) {
-      console.error('Error reading or parsing file:', err);
-    }
-  }
+async function add(args) {
+  const tasks = await getStoredTasks(FILE_NAME);
 
   const task = args.join(' ');
 
@@ -36,6 +25,7 @@ function add(args) {
 
   if (task) {
     fs.writeFileSync(FILE_NAME, jsonData)
+    console.log(`added task: ${task}`)
   } else {
     console.log(`task not added`)
     console.log('please enter a name for the task, ie: add do the dishes')
