@@ -32,14 +32,28 @@ async function add(args) {
   }
 }
 
-rl.on('line', (line) => {
+async function read() {
+  const tasksObject = await getStoredTasks(FILE_NAME);
+  const tasks = Object.values(tasksObject);
+
+  console.log(' ')
+  tasks.forEach(task => {
+    console.log(task)
+  })
+  console.log(' ')
+}
+
+rl.on('line', async (line) => {
   const input = line.trim();
 
   const [command, ...args] = input.split(' ');
 
   switch (command) {
     case 'add':
-      add(args)
+      await add(args)
+      break;
+    case 'read':
+      await read()
       break;
     case 'exit':
       rl.close();
