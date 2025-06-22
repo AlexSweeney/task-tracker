@@ -13,10 +13,8 @@ const rl = readline.createInterface({
 console.log("task-cli is running.  Type a command or enter 'help' to see all available commands.")
 rl.prompt();
 
-async function add(args) {
+async function add(task) {
   const tasks = await getStoredTasks(FILE_NAME);
-
-  const task = args.join(' ');
 
   const nextKey = Object.keys(tasks).length.toString();
   tasks[nextKey] = task;
@@ -43,17 +41,46 @@ async function read() {
   console.log(' ')
 }
 
+async function deleteTask(taskToDelete) {
+  const tasksObject = await getStoredTasks(FILE_NAME);
+  const tasks = Object.values(tasksObject);
+
+  if (!tasks.includes(taskToDelete)) {
+    console.log(`delete failed, task '${taskToDelete}' not found`)
+    console.log(`saved tasks: ${tasks.join(', ')}`)
+  } else {
+    const filteredTasks = tasks.map(task => {
+      return task !== taskToDelete && task
+    }).filter(val => val);
+
+    const tasksObject = {};
+    filteredTasks.forEach((task, i) => {
+      tasksObject[i] = task
+    })
+    const jsonData = JSON.stringify(tasksObject, null, 2);
+
+    fs.writeFileSync(FILE_NAME, jsonData)
+
+    console.log(`task '${taskToDelete}' deleted`)
+    console.log(' ')
+  }
+}
+
 rl.on('line', async (line) => {
   const input = line.trim();
 
   const [command, ...args] = input.split(' ');
+  const task = args.join(' ');
 
   switch (command) {
     case 'add':
-      await add(args)
+      await add(task)
       break;
     case 'read':
       await read()
+      break;
+    case 'delete':
+      await deleteTask(task)
       break;
     case 'exit':
       rl.close();
