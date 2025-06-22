@@ -1,6 +1,6 @@
 const readline = require('readline');
 const fs = require('fs');
-const { getStoredTasks } = require('./utils');
+const { getStoredTasks, getFilteredObject } = require('./utils');
 
 const FILE_NAME = 'tasks.json';
 
@@ -49,15 +49,8 @@ async function deleteTask(taskToDelete) {
     console.log(`delete failed, task '${taskToDelete}' not found`)
     console.log(`saved tasks: ${tasks.join(', ')}`)
   } else {
-    const filteredTasks = tasks.map(task => {
-      return task !== taskToDelete && task
-    }).filter(val => val);
-
-    const tasksObject = {};
-    filteredTasks.forEach((task, i) => {
-      tasksObject[i] = task
-    })
-    const jsonData = JSON.stringify(tasksObject, null, 2);
+    const newTasksObject = getFilteredObject(tasksObject, taskToDelete);
+    const jsonData = JSON.stringify(newTasksObject, null, 2);
 
     fs.writeFileSync(FILE_NAME, jsonData)
 

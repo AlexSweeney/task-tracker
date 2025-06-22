@@ -18,6 +18,26 @@ async function getStoredTasks(fileName) {
   return tasks;
 }
 
+function getFilteredObject(object, valueToRemove) {
+  const filteredObject = {};
+  const values = Object.values(object);
+
+  const filteredValues = values.map(value => {
+    return value !== valueToRemove && value
+  }).filter(val => val);
+
+  console.log('filteredValues', filteredValues)
+
+  filteredValues.forEach((value, i) => {
+    filteredObject[i] = value
+  })
+
+  console.log('filteredObject', filteredObject)
+
+  return filteredObject;
+}
+
 module.exports = {
-  getStoredTasks
+  getStoredTasks,
+  getFilteredObject
 }
